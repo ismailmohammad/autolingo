@@ -1,0 +1,39 @@
+{
+  "manifest_version": 2,
+
+  "name": "Auto Linguo",
+  "short_name": "Auto Linguo",
+  "description": "Learn new languages everyday",
+  "version": "1.0.0",
+  "homepage_url": "https://autolinguo.com/",
+
+  "web_accessible_resources":[
+    "/*"
+  ],
+
+  "permissions": [
+    "identity",
+    "storage",
+    "unlimitedStorage",
+    "http://*/*",
+    "https://*/*",
+    "activeTab",
+    "tabs"
+  ],
+
+  "browser_action": {
+    "default_title": "Auto Linguo"
+  },
+
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["app.js"]
+    }
+  ]
+}
