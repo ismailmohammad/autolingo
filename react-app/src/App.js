@@ -53,13 +53,17 @@ class App extends Component {
     }
 
     updateScore = (score) => {
+      console.log("New score: ", score);
       client.auth
       .loginWithCredential(new AnonymousCredential())
       .then(user => {
           const userCollection = mongo.db("userdata").collection("score");
-          return userCollection.updateOne({ "userName": "test"}, {"score": score });
+          return userCollection.updateOne({}, {"score": score });
       })
-      .then(result => console.log(result))
+      .then(result => {
+        this.setState(() => ({score}));
+        console.log("Updated score: ", result);
+      })
       .catch(console.error)
     }
     
@@ -76,8 +80,8 @@ class App extends Component {
                 return proxy.executeRead();
             })
             .then(results => {
-                console.log("Score Query: ", results);
-                this.setState({ score: results.score });
+                console.log("Score Query: ", results[0]);
+                this.setState(() => ({ score: results[0].score }));
             })
             .catch(console.error)
 
@@ -166,18 +170,23 @@ class App extends Component {
                 isKindaCorrect: false,
                 isWrong: false
             }));
+            this.translationDuplicateCheck2();
+            this.setState(() => ({answer: ""}));
+            this.updateScore(this.state.score + 2);
         } else if (distance <= 1) {
             this.setState(() => ({
                 isCorrect: false,
                 isKindaCorrect: true,
                 isWrong: false
             }));
+            this.updateScore(this.state.score + 1);
         } else {
             this.setState(() => ({
                 isCorrect: false,
                 isKindaCorrect: false,
                 isWrong: true
             }));
+            this.updateScore(this.state.score - 1);
         }
         if (e) {
             e.preventDefault();
@@ -232,7 +241,7 @@ class App extends Component {
                     {this.state.wordToShow} <img src={arrow} className="word-arrow" /> {this.state.translatedWord}
                 </p> : null }
                 <img className="settings" src={settingsIcon} data-toggle="modal" data-target="#settingsModal" alt="Settings" />
-
+                {this.state.score ? <h3 className="score-display">Score:<br/><span className="score-number">{this.state.score}</span></h3> : null}
                 {
                     this.state.correctAnswer &&
                     this.state.questionWord &&

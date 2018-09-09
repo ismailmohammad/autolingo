@@ -77,10 +77,17 @@ p.sub-paragraph{
 
 .score-display{
   position:absolute;
-  margin-left: 1.5%;
+  margin-right: 2.5%;
   top: 20px;
   right:0;
-  cursor: pointer;
+  color: white;
+  font-family: "Quicksand";
+}
+
+.score-number {
+  color: orange;
+  font-weight: bold;
+  text-shadow: 2px 2px black;
 }
 
 .answerform {
