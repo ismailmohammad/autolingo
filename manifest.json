@@ -32,5 +32,7 @@
   "background": {
     "scripts": ["background.js"],
     "persistent": false
-  }
+  },
+
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhCACtwxw93AYQvtp+ONQ7Ikcs+r+ndp4wWPYqXKjiTBqUzCdW55DvCad6CoUSlDmTz9Ab+RN0zpFZxo2f2OLSxsqE3qliVLWTcdTMJYw+p/GLxEW9HdYTl2HlN3W6ei5JE1igwwvCpWi65nmLss9SCr8rAgkK+fSZc3eH8NcQPSuiTi+uxS/22pMWXmsFx0B1V/4j9RnfxC3bGHdpMsAnTiqIplgAPyCOXWCVw2nPpqVwgKhv3u25VXEI5n75M03tzSEKPrGPN1+X2o6kb8jVlyemLlRCDdGP95fOfD41aM5BDPZciyEkF06VuMMFlzx0uR39+Os9XaAwr6Xf6cPxwIDAQAB"
 }
