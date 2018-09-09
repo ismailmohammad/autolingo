@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import franceBackgroundImage from './france_background.jpg';
+import franceBackgroundImage from './media/france_background.jpg';
+import spainBackgroundImage from './media/spain_background.jpg';
 import {Stitch, RemoteMongoClient, AnonymousCredential} from "mongodb-stitch-browser-sdk";
 import arrow from './media/arrow.jpg';
 import settingsIcon from './settings_icon.png';
 import './App.css';
-import {translateFrench} from "./translate";
+import {translate} from "./translate";
+import basicSpanishWords from "./basicSpanishWords";
 
 const APP_ID = "auto-linguo-xaqwa";
 const client = Stitch.initializeDefaultAppClient(APP_ID);
@@ -44,7 +46,8 @@ class App extends Component {
         languageChoice: "french",
         words: [],
         score: 0,
-        wrongOnce: false
+        wrongOnce: false,
+        translateCode: "fr"
     };
 
     componentDidMount() {
@@ -56,8 +59,8 @@ class App extends Component {
       client.auth
       .loginWithCredential(new AnonymousCredential())
       .then(user => {
-          const frenchCollection = mongo.db("frenchwords").collection("basic");
-          return frenchCollection.find({});
+          const wordCollection = mongo.db(this.state.languageChoice + "words").collection("basic");
+          return wordCollection.find({});
       })
       .then(results => {
         const {proxy} = results;
@@ -67,14 +70,14 @@ class App extends Component {
       .catch(console.error)
     }
 
-    // updateDatabase = () => {
-    //   client.auth
-    //   .loginWithCredential(new AnonymousCredential())
-    //   .then(user => {
-    //       const frenchCollection = mongo.db("frenchwords").collection("basic");
-    //       return frenchCollection.insertMany(basicWords.map(word => ({word})));
-    //   })
-    // }
+    updateDatabase = () => {
+      client.auth
+      .loginWithCredential(new AnonymousCredential())
+      .then(user => {
+          const wordCollection = mongo.db("spanishwords").collection("basic");
+          return wordCollection.insertMany(basicSpanishWords.map(word => ({word})));
+      })
+    }
 
     updateScore = (score) => {
         console.log("New score: ", score);
@@ -119,7 +122,14 @@ class App extends Component {
     };
 
     selectLanguage = event => {
-        this.setState({selectLanguage: event.target.value});
+        this.setState({ languageChoice: event.target.value});
+        let lang = "fr";
+        if (event.target.value === "spanish") {
+          lang = "es"
+          this.setState(() => ({ backgroundImgUrl: spainBackgroundImage}));
+        }
+        this.setState(() => ({ translateCode: lang }));
+        this.queryWords();
     };
 
     queryWords = event => {
@@ -128,17 +138,17 @@ class App extends Component {
             client.auth
                 .loginWithCredential(new AnonymousCredential())
                 .then(user => {
-                    const frenchCollection = mongo.db("frenchwords").collection("basic");
-                    // return frenchCollection.insertMany(basicWords.map(word => ({word})));
-                    return frenchCollection.find();
-                    // return frenchCollection.deleteMany({});
+                    const wordCollection = mongo.db(this.state.languageChoice + "words").collection("basic");
+                    // return wordCollection.insertMany(basicWords.map(word => ({word})));
+                    return wordCollection.find();
+                    // return wordCollection.deleteMany({});
                 })
                 .then(results => {
                     const {proxy} = results;
                     return proxy.executeRead();
                 })
                 .then(results => {
-                    // const frenchCollection = mongo.db("frenchwords").collection("basic");
+                    // const wordCollection = mongo.db(this.state.languageChoice + "words").collection("basic");
                     this.setState({ words: results });
                 })
                 .then(() => {
@@ -230,7 +240,8 @@ class App extends Component {
 
     translationDuplicateCheck() {
         const word = this.getRandomWord();
-        return translateFrench(word.word)
+        
+        return translate(word.word, this.state.translateCode)
             .then(translatedWord => {
                 if (translatedWord !== word.word) {
                     return new Promise(resolve => {
@@ -249,7 +260,7 @@ class App extends Component {
 
     translationDuplicateCheck2() {
         const word = this.getRandomWord();
-        return translateFrench(word.word)
+        return translate(word.word, this.state.translateCode)
             .then(translatedWord => {
                 if (translatedWord !== word.word) {
                     return new Promise(resolve => {
@@ -271,7 +282,7 @@ class App extends Component {
                 backgroundImage: `url('${this.state.backgroundImgUrl}')`
             }}>
                 <header className="App-header">
-                    <h1 className="App-title">Learn: <b>{this.state.languageChoice}!</b></h1>
+                    <h1 className="App-title">Learn: <span className='App-title-language'>{this.state.languageChoice}!</span></h1>
                 </header>
                 {this.state.translatedWord ? <p className="App-intro">
                     {this.state.wordToShow} <img src={arrow} className="word-arrow" /> {this.state.translatedWord}
@@ -284,7 +295,7 @@ class App extends Component {
                     <form className="answerform" onSubmit={this.submitAnswer}>
                         <div className="form-row align-items-center text-center">
                             <div className="col-auto">
-                                <p>Quiz: What is the English translation of the French word <b>{this.state.questionWord}</b>?</p>
+                                <p>Quiz: What is the English translation of the {this.state.languageChoice.charAt(0).toUpperCase() + this.state.languageChoice.slice(1)} word <b>{this.state.questionWord}</b>?</p>
                             </div>
                         </div>
                         <div className="form-row align-items-center text-center">
@@ -323,9 +334,9 @@ class App extends Component {
                                 </button>
                             </div>
                             <div className="modal-body">
-                                <select onChange={this.selectLanguage}>
-                                    <option id="french">French</option>
-                                    <option id="spanish">Spanish</option>
+                                <select value={this.state.languageChoice} onChange={this.selectLanguage}>
+                                    <option id="french">french</option>
+                                    <option id="spanish">spanish</option>
                                 </select>
                             </div>
                             <div className="modal-footer">

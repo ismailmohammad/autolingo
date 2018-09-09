@@ -1998,4 +1998,4 @@ const basicFrenchWords = [
   "Royale"
 ];
 
-export default basicWords;
+export default basicFrenchWords;

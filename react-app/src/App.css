@@ -25,6 +25,11 @@
   margin-top: 0.01%;
 }
 
+.App-title-language {
+  color: dodgerblue;
+  font-weight: bold;
+}
+
 .App-intro {
   color: white;
   text-shadow: 2px 2px black;
