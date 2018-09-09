@@ -44,7 +44,8 @@ class App extends Component {
         backgroundImgUrl: franceBackgroundImage,
         languageChoice: "french",
         words: [],
-        score: null
+        score: 0,
+        wrongOnce: false
     };
 
     componentDidMount() {
@@ -172,21 +173,28 @@ class App extends Component {
             }));
             this.translationDuplicateCheck2();
             this.setState(() => ({answer: ""}));
-            this.updateScore(this.state.score + 2);
+            if (!this.state.wrongOnce) {
+              this.updateScore(this.state.score + 2);
+            }
         } else if (distance <= 1) {
             this.setState(() => ({
                 isCorrect: false,
                 isKindaCorrect: true,
                 isWrong: false
             }));
-            this.updateScore(this.state.score + 1);
+            if (!this.state.wrongOnce) {
+              this.updateScore(this.state.score + 1);
+            }
         } else {
             this.setState(() => ({
                 isCorrect: false,
                 isKindaCorrect: false,
-                isWrong: true
+                isWrong: true,
+                wrongOnce: true
             }));
-            this.updateScore(this.state.score - 1);
+            if (this.state.score - 1 >= 0) {
+              this.updateScore(this.state.score - 1);
+            }
         }
         if (e) {
             e.preventDefault();
@@ -220,7 +228,8 @@ class App extends Component {
                     return new Promise(resolve => {
                         this.setState({
                             questionWord: word.word,
-                            correctAnswer: translatedWord
+                            correctAnswer: translatedWord,
+                            wrongOnce: false
                         }, () => resolve(this.state));
                     });
                 } else {
@@ -241,7 +250,7 @@ class App extends Component {
                     {this.state.wordToShow} <img src={arrow} className="word-arrow" /> {this.state.translatedWord}
                 </p> : null }
                 <img className="settings" src={settingsIcon} data-toggle="modal" data-target="#settingsModal" alt="Settings" />
-                {this.state.score ? <h3 className="score-display">Score:<br/><span className="score-number">{this.state.score}</span></h3> : null}
+                <h3 className="score-display">Score:<br/><span className="score-number">{this.state.score}</span></h3>
                 {
                     this.state.correctAnswer &&
                     this.state.questionWord &&
