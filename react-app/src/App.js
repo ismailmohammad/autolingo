@@ -231,30 +231,38 @@ class App extends Component {
                 {this.state.translatedWord ? <p className="App-intro">
                     {this.state.wordToShow} <img src={arrow} className="word-arrow" /> {this.state.translatedWord}
                 </p> : null }
-                <button onClick={this.execute}>EXECUTE</button>
-                {this.state.translatedWord ? <p className="sub-paragraph"> Open a new tab for a different word</p> : null }
                 <img className="settings" src={settingsIcon} data-toggle="modal" data-target="#settingsModal" alt="Settings" />
 
                 {
                     this.state.correctAnswer &&
                     this.state.questionWord &&
-                    <form onSubmit={this.submitAnswer}>
+                    <form className="answerform" onSubmit={this.submitAnswer}>
                         <div className="form-row align-items-center text-center">
-                            <p>Quiz: What is the French translation of {this.state.questionWord}?</p>
+                            <div className="col-auto">
+                                <p>Quiz: What is the English translation of the French word <b>{this.state.questionWord}</b>?</p>
+                            </div>
                         </div>
-                        <div className="form-group text-center">
-                            <input
-                                type="text"
-                                id="txtAnswer"
-                                className="form-control"
-                                value={this.state.answer}
-                                placeholder="Enter your answer"
-                                onChange={this.changeAnswer}
-                            />
-                            <button type="submit" className="btn btn-primary" onClick={this.submitAnswer}>Submit answer</button>
-                            {this.state.isCorrect && <p className="text-success">Correct!</p>}
-                            {this.state.isKindaCorrect && <p className="text-info">Close enough! The correct answer is {this.state.correctAnswer}</p>}
-                            {this.state.isWrong && <p className="text-danger">Oh no! The correct answer is {this.state.correctAnswer}</p>}
+                        <div className="form-row align-items-center text-center">
+                            <div className="col-auto">
+                                <input
+                                    type="text"
+                                    id="txtAnswer"
+                                    className="form-control"
+                                    value={this.state.answer}
+                                    placeholder="Enter your answer"
+                                    onChange={this.changeAnswer}
+                                />
+                            </div>
+                            <div className="col-auto">
+                                <button type="submit" className="btn btn-primary" onClick={this.submitAnswer}>Submit answer</button>
+                            </div>
+                        </div>
+                        <div className="form-row align-items-center text-center" style={{marginTop: 20}}>
+                            <div className="col-12 font-weight-bold">
+                                {this.state.isCorrect && <p className="text-success">Correct!</p>}
+                                {this.state.isKindaCorrect && <p className="text-info">Close enough! The correct answer is {this.state.correctAnswer}</p>}
+                                {this.state.isWrong && <p className="text-danger">Oh no! The correct answer is {this.state.correctAnswer}</p>}
+                            </div>
                         </div>
                     </form>
                 }
