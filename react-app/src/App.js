@@ -3,6 +3,7 @@ import franceBackgroundImage from './france_background.jpg';
 import {Stitch, RemoteMongoClient, AnonymousCredential} from "mongodb-stitch-browser-sdk";
 import settingsIcon from './settings_icon.png';
 import './App.css';
+import basicWords from "./basicWords";
 
 const APP_ID = "auto-linguo-xaqwa";
 const client = Stitch.initializeDefaultAppClient(APP_ID);
@@ -40,11 +41,20 @@ class App extends Component {
         client.auth
             .loginWithCredential(new AnonymousCredential())
             .then(user => {
-                const frenchCollection = mongo.db("dictionary").collection("french");
-                return frenchCollection.insertMany(words.map(word => ({word})));
+                const frenchCollection = mongo.db("frenchwords").collection("basic");
+                // return frenchCollection.insertMany(basicWords.map(word => ({word})));
+                // return frenchCollection.find();
+                return frenchCollection.deleteMany({});
             })
+            // .then(results => {
+            //     console.log("Results: ", results);
+            //
+            //     const {proxy} = results;
+            //     return proxy.executeRead();
+            // })
             .then(results => {
-                console.log("Inserted words into french dictionary with results: ", results);
+                console.log("Results2: ", results);
+                // const frenchCollection = mongo.db("frenchwords").collection("basic");
             })
             .catch(console.error);
         if (event) {
@@ -63,7 +73,7 @@ class App extends Component {
                 <p className="App-intro">
                     {this.state.wordToShow} -> {this.state.wordToShow}
                 </p>
-                <button onClick={this.execute}>Auth test</button>
+                <button onClick={this.execute}>EXECUTE</button>
                 <p className="sub-paragraph"> Open a new tab or refresh for a different word. </p>
                 <img className="settings" src={settingsIcon} data-toggle="modal" data-target="#settingsModal" alt="Settings" />
                 <div className="modal fade" id="settingsModal" tabIndex="-1" role="dialog" aria-labelledby="setting sModalLabel" aria-hidden="true">
