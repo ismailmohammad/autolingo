@@ -1,21 +1,28 @@
 .App {
+  height: 100vh;
   text-align: center;
+  background-image: url("https://picturesmania.com/0-0/6056_france-par.jpg");
+  background-size: cover;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
-}
+
 
 .App-header {
-  background-color: #222;
+  font-color: grey;
   height: 150px;
   padding: 20px;
-  color: white;
+  margin: auto;
+  width: 50%
+
 }
 
 .App-title {
-  font-size: 1.5em;
+  color:white;
+  font-family: 'Lekton', sans-serif;
+  font-size: 3.5em;
+  text-shadow: 1px 1px black;
+  border-top: 50%;
+  border-bottom: 100px;
 }
 
 .App-intro {
