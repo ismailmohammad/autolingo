@@ -2,6 +2,7 @@
   height: 100vh;
   text-align: center;
   background-size: cover;
+  overflow-x: hidden;
 }
 
 .App-header {

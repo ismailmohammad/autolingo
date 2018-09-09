@@ -38,9 +38,10 @@ class App extends Component {
         wordToShow: null,
         translatedWord: null,
         questionWord: null,
-        answer: null,
+        answer: "",
         correctAnswer: null,
         isCorrect: false,
+        isKindaCorrect: false,
         isWrong: false,
         backgroundImgUrl: franceBackgroundImage,
         languageChoice: "french",
@@ -64,104 +65,129 @@ class App extends Component {
     };
 
     queryWords = event => {
-      this.setState(() => ({isLoading: true}));
-      if (!this.state.isLoading) {
-        client.auth
-            .loginWithCredential(new AnonymousCredential())
-            .then(user => {
-                const frenchCollection = mongo.db("frenchwords").collection("basic");
-                // return frenchCollection.insertMany(basicWords.map(word => ({word})));
-                return frenchCollection.find();
-                // return frenchCollection.deleteMany({});
-            })
-            .then(results => {
-                const {proxy} = results;
-                return proxy.executeRead();
-            })
-            .then(results => {
-                console.log("Results2: ", results);
-                // const frenchCollection = mongo.db("frenchwords").collection("basic");
-                this.setState({ words: results });
-            })
-            .then(() => {
-              return this.translationDuplicateCheck();
-            })
-            .then(() => {
-              return this.translationDuplicateCheck2();
-            })
-            .then(() => {
-              const userCollection = mongo.db("userdata").collection("users");
-              console.log("HERE: ",this.state.wordObject);
-              return userCollection.updateOne({"userName": "test"}, {"lastCursor": this.state.wordObject.word });
-            })
-            .then(result => {
-              console.log(result);
-              const userCollection = mongo.db("userdata").collection("users");
-              return userCollection.find();
-            })
-            .then(({proxy}) => proxy.executeRead())
-            .then(res => console.log(res[0]))
-            .catch(console.error)
-            .finally(() => {
-      this.setState(() => ({isLoading: false}));
-            })
-      }
-        
+        this.setState(() => ({isLoading: true}));
+        if (!this.state.isLoading) {
+            client.auth
+                .loginWithCredential(new AnonymousCredential())
+                .then(user => {
+                    const frenchCollection = mongo.db("frenchwords").collection("basic");
+                    // return frenchCollection.insertMany(basicWords.map(word => ({word})));
+                    return frenchCollection.find();
+                    // return frenchCollection.deleteMany({});
+                })
+                .then(results => {
+                    const {proxy} = results;
+                    return proxy.executeRead();
+                })
+                .then(results => {
+                    // const frenchCollection = mongo.db("frenchwords").collection("basic");
+                    this.setState({ words: results });
+                })
+                .then(() => {
+                    return this.translationDuplicateCheck();
+                })
+                .then(() => {
+                    return this.translationDuplicateCheck2();
+                })
+                .then(() => {
+                    const userCollection = mongo.db("userdata").collection("users");
+                    return userCollection.updateOne({"userName": "test"}, {"lastCursor": this.state.wordObject.word });
+                })
+                .then(result => {
+                    const userCollection = mongo.db("userdata").collection("users");
+                    return userCollection.find();
+                })
+                .then(({proxy}) => proxy.executeRead())
+                .then(res => console.log(res[0]))
+                .catch(console.error)
+                .finally(() => {
+                    this.setState(() => ({isLoading: false}));
+                })
+        }
+
         if (event) {
             event.preventDefault();
         }
     };
 
     changeAnswer = e => {
-        this.setState(() => ({answer: e.target.value}));
+        const answer = e.target.value;
+        this.setState(() => ({answer}));
         if (e) {
             e.preventDefault();
         }
     };
 
     submitAnswer = e => {
-        this.setState(() => ({isCorrect: false, isWrong: false}));
-        // TODO: Levenshtein distance
+        this.setState(() => ({
+            isCorrect: false,
+            isKindaCorrect: true,
+            isWrong: false
+        }));
+        const {correctAnswer, answer} = this.state;
+        console.log("correctAnswer: ", correctAnswer);
+        console.log("answer: ", answer);
+        const distance = levenshteinDistance(correctAnswer, answer);
+        console.log("distance: ", distance);
+        if (distance <= 0) {
+            this.setState(() => ({
+                isCorrect: true,
+                isKindaCorrect: false,
+                isWrong: false
+            }));
+        } else if (distance <= 1) {
+            this.setState(() => ({
+                isCorrect: false,
+                isKindaCorrect: true,
+                isWrong: false
+            }));
+        } else {
+            this.setState(() => ({
+                isCorrect: false,
+                isKindaCorrect: false,
+                isWrong: true
+            }));
+        }
         if (e) {
             e.preventDefault();
         }
     };
 
-  translationDuplicateCheck() {
-    const word = this.getRandomWord();
-    return translateFrench(word.word)
-      .then(translatedWord => {
-        if (translatedWord !== word.word) {
-          return new Promise(resolve => {
-            this.setState({
-              wordToShow: word.word,
-              translatedWord,
-              wordObject: word
-            }, () => resolve(this.state));
-          });
-        }
-        else {
-          return this.translationDuplicateCheck();
-        }
-      });
-  }
+    translationDuplicateCheck() {
+        const word = this.getRandomWord();
+        return translateFrench(word.word)
+            .then(translatedWord => {
+                if (translatedWord !== word.word) {
+                    return new Promise(resolve => {
+                        this.setState({
+                            wordToShow: word.word,
+                            translatedWord,
+                            wordObject: word
+                        }, () => resolve(this.state));
+                    });
+                }
+                else {
+                    return this.translationDuplicateCheck();
+                }
+            });
+    }
 
-  translationDuplicateCheck2() {
-    const word = this.getRandomWord();
-    return translateFrench(word.word)
-      .then(translatedWord => {
-        if (translatedWord !== word.word) {
-          return new Promise(resolve => {
-            this.setState({
-              questionWord: word.word,
-              answer: translatedWord
-            }, () => resolve(this.state));
-          });
-        } else {
-          return this.translationDuplicateCheck2();
-        }
-      });
-  }
+    translationDuplicateCheck2() {
+        const word = this.getRandomWord();
+        return translateFrench(word.word)
+            .then(translatedWord => {
+                if (translatedWord !== word.word) {
+                    return new Promise(resolve => {
+                        this.setState({
+                            questionWord: word.word,
+                            correctAnswer: translatedWord
+                        }, () => resolve(this.state));
+                    });
+                } else {
+                    return this.translationDuplicateCheck2();
+                }
+            });
+    }
 
     render() {
         return (
@@ -178,19 +204,29 @@ class App extends Component {
                 {this.state.translatedWord ? <p className="sub-paragraph"> Open a new tab for a different word</p> : null }
                 <img className="settings" src={settingsIcon} data-toggle="modal" data-target="#settingsModal" alt="Settings" />
 
-                {(this.state.answer && this.state.questionWord) ?
-                <div className="question-time">
-                  <p className="sub-paragraph" style={{}}>Quiz: What is the French translation of {this.state.questionWord}?</p>
-                  <input
-                      type="text"
-                      className="input"
-                      placeholder="Enter your answer"
-                      onChange={this.changeAnswer}
-                  />
-                  <button onClick={this.submitAnswer}>Submit answer</button>
-                  {this.state.isCorrect && <p className="text-success">Correct!</p>}
-                  {this.state.isWrong && <p className="text-danger">Oh no! The correct answer is</p>}
-                </div> : null}
+                {
+                    this.state.correctAnswer &&
+                    this.state.questionWord &&
+                    <form onSubmit={this.submitAnswer}>
+                        <div className="form-row align-items-center text-center">
+                            <p>Quiz: What is the French translation of {this.state.questionWord}?</p>
+                        </div>
+                        <div className="form-group text-center">
+                            <input
+                                type="text"
+                                id="txtAnswer"
+                                className="form-control"
+                                value={this.state.answer}
+                                placeholder="Enter your answer"
+                                onChange={this.changeAnswer}
+                            />
+                            <button type="submit" className="btn btn-primary" onClick={this.submitAnswer}>Submit answer</button>
+                            {this.state.isCorrect && <p className="text-success">Correct!</p>}
+                            {this.state.isKindaCorrect && <p className="text-info">Close enough! The correct answer is {this.state.correctAnswer}</p>}
+                            {this.state.isWrong && <p className="text-danger">Oh no! The correct answer is {this.state.correctAnswer}</p>}
+                        </div>
+                    </form>
+                }
 
 
                 <div className="modal fade" id="settingsModal" tabIndex="-1" role="dialog" aria-labelledby="settingsModalLabel" aria-hidden="true">
