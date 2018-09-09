@@ -84,18 +84,23 @@ class App extends Component {
                 this.setState({ words: results });
             })
             .then(() => {
-              const word = this.getRandomWord();
-              translateFrench(word.word)
-                  .then(translatedWord => this.setState({
-                      wordToShow: word.word,
-                      translatedWord
-                  }));
-              const userCollection = mongo.db("usedata").collection("users");
-              return userCollection.find({ "userName": "test" });
+              return this.translationDuplicateCheck();
             })
-            .then(user => {
-              user
+            .then(() => {
+              return this.translationDuplicateCheck2();
             })
+            .then(() => {
+              const userCollection = mongo.db("userdata").collection("users");
+              console.log("HERE: ",this.state.wordObject);
+              return userCollection.updateOne({"userName": "test"}, {"lastCursor": this.state.wordObject.word });
+            })
+            .then(result => {
+              console.log(result);
+              const userCollection = mongo.db("userdata").collection("users");
+              return userCollection.find();
+            })
+            .then(({proxy}) => proxy.executeRead())
+            .then(res => console.log(res[0]))
             .catch(console.error)
             .finally(() => {
       this.setState(() => ({isLoading: false}));
@@ -115,12 +120,48 @@ class App extends Component {
     };
 
     submitAnswer = e => {
-        this.setState(() => ({}));
-
+        this.setState(() => ({isCorrect: false, isWrong: false}));
+        // TODO: Levenshtein distance
         if (e) {
             e.preventDefault();
         }
     };
+
+  translationDuplicateCheck() {
+    const word = this.getRandomWord();
+    return translateFrench(word.word)
+      .then(translatedWord => {
+        if (translatedWord !== word.word) {
+          return new Promise(resolve => {
+            this.setState({
+              wordToShow: word.word,
+              translatedWord,
+              wordObject: word
+            }, () => resolve(this.state));
+          });
+        }
+        else {
+          return this.translationDuplicateCheck();
+        }
+      });
+  }
+
+  translationDuplicateCheck2() {
+    const word = this.getRandomWord();
+    return translateFrench(word.word)
+      .then(translatedWord => {
+        if (translatedWord !== word.word) {
+          return new Promise(resolve => {
+            this.setState({
+              questionWord: word.word,
+              answer: translatedWord
+            }, () => resolve(this.state));
+          });
+        } else {
+          return this.translationDuplicateCheck2();
+        }
+      });
+  }
 
     render() {
         return (
@@ -130,23 +171,26 @@ class App extends Component {
                 <header className="App-header">
                     <h1 className="App-title">Learn: <b>{this.state.languageChoice}!</b></h1>
                 </header>
-                <p className="App-intro">
+                {this.state.translatedWord ? <p className="App-intro">
                     {this.state.wordToShow} <img src={arrow} className="word-arrow" /> {this.state.translatedWord}
-                </p>
+                </p> : null }
                 <button onClick={this.execute}>EXECUTE</button>
-                <p className="sub-paragraph"> Open a new tab for a different word</p>
+                {this.state.translatedWord ? <p className="sub-paragraph"> Open a new tab for a different word</p> : null }
                 <img className="settings" src={settingsIcon} data-toggle="modal" data-target="#settingsModal" alt="Settings" />
 
-                <p className="sub-paragraph" style={{}}>Quiz: What is the French translation of {this.state.questionWord}</p>
-                <input
-                    type="text"
-                    className="input"
-                    placeholder="Enter your answer"
-                    onChange={this.changeAnswer}
-                />
-                <button onClick={this.submitAnswer}>Submit answer</button>
-                {this.state.isCorrect && <p className="text-success">Correct!</p>}
-                {this.state.isWrong && <p className="text-danger">Oh no! The correct answer is</p>}
+                {(this.state.answer && this.state.questionWord) ?
+                <div className="question-time">
+                  <p className="sub-paragraph" style={{}}>Quiz: What is the French translation of {this.state.questionWord}?</p>
+                  <input
+                      type="text"
+                      className="input"
+                      placeholder="Enter your answer"
+                      onChange={this.changeAnswer}
+                  />
+                  <button onClick={this.submitAnswer}>Submit answer</button>
+                  {this.state.isCorrect && <p className="text-success">Correct!</p>}
+                  {this.state.isWrong && <p className="text-danger">Oh no! The correct answer is</p>}
+                </div> : null}
 
 
                 <div className="modal fade" id="settingsModal" tabIndex="-1" role="dialog" aria-labelledby="settingsModalLabel" aria-hidden="true">

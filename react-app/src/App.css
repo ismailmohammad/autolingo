@@ -29,13 +29,25 @@
   text-shadow: 2px 2px black;
   font-size: 5.5em;
   margin-top: 1%;
+  -webkit-animation: fadein 2s; /* Safari, Chrome and Opera > 12.1 */
+}
+
+@keyframes fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 p.sub-paragraph{
   color: white;
-  margin-top: 15%;
+  margin-top: 50px;
   font-size: 1.3em;
-  margin-bottom: 05%;
+  margin-bottom: 10px;
   color: white;
   text-shadow: 0 1px black;
 }
