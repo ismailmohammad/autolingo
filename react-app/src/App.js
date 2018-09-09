@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import franceBackgroundImage from './france_background.jpg';
 import {Stitch, RemoteMongoClient, AnonymousCredential} from "mongodb-stitch-browser-sdk";
+import arrow from './media/arrow.jpg';
 import settingsIcon from './settings_icon.png';
 import './App.css';
 import basicWords from "./basicWords";
@@ -62,16 +63,17 @@ class App extends Component {
         }
     };
 
+
     render() {
         return (
             <div className="App" style={{
                 backgroundImage: `url('${this.state.backgroundImgUrl}')`
             }}>
                 <header className="App-header">
-                    <h1 className="App-title">Learn: <u>French</u>!</h1>
+                    <h1 className="App-title">Learn: <b>French!</b></h1>
                 </header>
                 <p className="App-intro">
-                    {this.state.wordToShow} -> {this.state.wordToShow}
+                    {this.state.wordToShow} <img src={arrow} className="word-arrow" /> {this.state.wordToShow}
                 </p>
                 <button onClick={this.execute}>EXECUTE</button>
                 <p className="sub-paragraph"> Open a new tab or refresh for a different word. </p>

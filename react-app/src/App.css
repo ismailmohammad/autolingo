@@ -5,17 +5,20 @@
 }
 
 .App-header {
-  font-color: grey;
+  color: grey;
   height: 150px;
   padding: 20px;
   margin: auto;
-  width: 50%
+  width: 50%;
+}
 
+.word-arrow {
+  height: 40px;
 }
 
 .App-title {
-  color:white;
-  font-family: 'Lekton', sans-serif;
+  color: white;
+  font-family: 'Quicksand';
   font-size: 3.5em;
   text-shadow: 2px 2px black;
   margin-top: 0.01%;
@@ -39,6 +42,7 @@ p.sub-paragraph{
     bottom:20px;
     left:0;
     height: 50px;
+  cursor: pointer;
 }
 
 .settings:hover{
