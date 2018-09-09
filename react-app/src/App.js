@@ -1,21 +1,27 @@
 import React, { Component } from 'react';
 import franceBackgroundImage from './france_background.jpg';
+import {Stitch, RemoteMongoClient, AnonymousCredential} from "mongodb-stitch-browser-sdk";
 import settingsIcon from './settings_icon.png';
 import logo from './logo.svg';
 import './App.css';
 
-const words = ["Word1", "Word2", "Word3", "Word4", "Word5"];
+const APP_ID = "auto-linguo-xaqwa";
+const client = Stitch.initializeDefaultAppClient(APP_ID);
+const mongo = client.getServiceClient(RemoteMongoClient.factory, "mongodb-atlas");
+
+const words = ["Bonjour", "Salut", "Merci", "Je", "Tu", "Suis", "Oui", "Non" ];
 const languages = {
-  french: {
-    description: "add a ",
-    imageUrl: ""
-  }
-}
+    french: {
+        description: "add a ",
+        imageUrl: ""
+    }
+    
+};
 
 const getRandomWord = () => {
-  console.log(Math.random() * words.length);
-  return words[Math.floor(Math.random() * words.length)];
-}
+    console.log(Math.random() * words.length);
+    return words[Math.floor(Math.random() * words.length)];
+};
 
 class App extends Component {
   state = {
