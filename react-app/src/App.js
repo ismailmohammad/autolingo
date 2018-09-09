@@ -286,7 +286,7 @@ class App extends Component {
                     <h1 className="App-title">Learn: <span className='App-title-language'>{this.state.languageChoice}!</span></h1>
                 </header>
                 {this.state.translatedWord ? <p className="App-intro">
-                    {this.state.wordToShow} <img src={arrow} className="word-arrow" /> {this.state.translatedWord}
+                    {this.state.wordToShow} <img src={arrow} className="word-arrow" alt="arr"/> {this.state.translatedWord}
                 </p> : null }
                 <img className="settings" src={settingsIcon} data-toggle="modal" data-target="#settingsModal" alt="Settings" />
                 <div className="score-display"><h3>Score:<br/><span className="score-number">{this.state.score}</span></h3></div>

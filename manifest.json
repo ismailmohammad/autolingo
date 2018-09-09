@@ -4,8 +4,12 @@
   "name": "Auto Linguo",
   "short_name": "Auto Linguo",
   "description": "Learn new languages everyday",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage_url": "https://autolinguo.com/",
+
+  "icons": {
+    "128": "logo.png"
+  },
 
   "web_accessible_resources":[
     "/*"
