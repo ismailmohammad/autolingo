@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import franceBackgroundImage from './france_background.jpg';
 import {Stitch, RemoteMongoClient, AnonymousCredential} from "mongodb-stitch-browser-sdk";
 import settingsIcon from './settings_icon.png';
-import logo from './logo.svg';
 import './App.css';
 
 const APP_ID = "auto-linguo-xaqwa";
@@ -10,16 +9,8 @@ const client = Stitch.initializeDefaultAppClient(APP_ID);
 const mongo = client.getServiceClient(RemoteMongoClient.factory, "mongodb-atlas");
 
 const words = ["Bonjour", "Salut", "Merci", "Je", "Tu", "Suis", "Oui", "Non" ];
-const languages = {
-    french: {
-        description: "add a ",
-        imageUrl: ""
-    }
-
-};
 
 const getRandomWord = () => {
-    console.log(Math.random() * words.length);
     return words[Math.floor(Math.random() * words.length)];
 };
 
@@ -32,7 +23,6 @@ class App extends Component {
 
     componentDidMount() {
         const word = getRandomWord();
-        console.log(word);
         this.setState({
             wordToShow: word
         });
@@ -50,9 +40,8 @@ class App extends Component {
         client.auth
             .loginWithCredential(new AnonymousCredential())
             .then(user => {
-                console.log("Logged in to mongodb as user: ", user);
                 const frenchCollection = mongo.db("dictionary").collection("french");
-                return frenchCollection.insertMany(words);
+                return frenchCollection.insertMany(words.map(word => ({word})));
             })
             .then(results => {
                 console.log("Inserted words into french dictionary with results: ", results);
@@ -76,7 +65,7 @@ class App extends Component {
                 </p>
                 <button onClick={this.execute}>Auth test</button>
                 <p className="sub-paragraph"> Open a new tab or refresh for a different word. </p>
-                <img className = "settings" src={settingsIcon} data-toggle="modal" data-target="#settingsModal" />
+                <img className="settings" src={settingsIcon} data-toggle="modal" data-target="#settingsModal" alt="Settings" />
                 <div className="modal fade" id="settingsModal" tabIndex="-1" role="dialog" aria-labelledby="setting sModalLabel" aria-hidden="true">
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
