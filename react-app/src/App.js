@@ -1,4 +1,3 @@
-/*global chrome*/
 import React, { Component } from 'react';
 import franceBackgroundImage from './france_background.jpg';
 import {Stitch, RemoteMongoClient, AnonymousCredential} from "mongodb-stitch-browser-sdk";
@@ -54,23 +53,23 @@ class App extends Component {
     }
 
     updateScore = (score) => {
-      console.log("New score: ", score);
-      client.auth
-      .loginWithCredential(new AnonymousCredential())
-      .then(user => {
-          const userCollection = mongo.db("userdata").collection("score");
-          return userCollection.updateOne({}, {"score": score });
-      })
-      .then(result => {
-        this.setState(() => ({score}));
-        console.log("Updated score: ", result);
-      })
-      .catch(console.error)
+        console.log("New score: ", score);
+        client.auth
+            .loginWithCredential(new AnonymousCredential())
+            .then(user => {
+                const userCollection = mongo.db("userdata").collection("score");
+                return userCollection.updateOne({}, {"score": score });
+            })
+            .then(result => {
+                this.setState(() => ({score}));
+                console.log("Updated score: ", result);
+            })
+            .catch(console.error)
     }
-    
+
 
     queryScore = () => {
-      client.auth
+        client.auth
             .loginWithCredential(new AnonymousCredential())
             .then(user => {
                 const userCollection = mongo.db("userdata").collection("score");
@@ -86,7 +85,7 @@ class App extends Component {
             })
             .catch(console.error)
 
-    }
+    };
 
     getRandomWord = () => {
         return this.state.words[Math.floor(Math.random() * this.state.words.length)];
