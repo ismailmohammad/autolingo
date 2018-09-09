@@ -53,6 +53,30 @@ class App extends Component {
         this.queryScore();
     }
 
+    cleanDatabase = () => {
+      client.auth
+      .loginWithCredential(new AnonymousCredential())
+      .then(user => {
+          const frenchCollection = mongo.db("frenchwords").collection("basic");
+          return frenchCollection.find({});
+      })
+      .then(results => {
+        const {proxy} = results;
+        return proxy.executeRead();
+      })
+      .then(console.log)
+      .catch(console.error)
+    }
+
+    // updateDatabase = () => {
+    //   client.auth
+    //   .loginWithCredential(new AnonymousCredential())
+    //   .then(user => {
+    //       const frenchCollection = mongo.db("frenchwords").collection("basic");
+    //       return frenchCollection.insertMany(basicWords.map(word => ({word})));
+    //   })
+    // }
+
     updateScore = (score) => {
       console.log("New score: ", score);
       client.auth
