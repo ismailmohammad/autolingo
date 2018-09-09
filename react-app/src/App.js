@@ -1,3 +1,4 @@
+/*global chrome*/
 import React, { Component } from 'react';
 import franceBackgroundImage from './france_background.jpg';
 import {Stitch, RemoteMongoClient, AnonymousCredential} from "mongodb-stitch-browser-sdk";
@@ -13,36 +14,70 @@ const mongo = client.getServiceClient(RemoteMongoClient.factory, "mongodb-atlas"
 
 const words = ["Bonjour", "Salut", "Merci", "Je", "Tu", "Suis", "Oui", "Non" ];
 
-const getRandomWord = () => {
-    return words[Math.floor(Math.random() * words.length)];
-};
-
 class App extends Component {
     state = {
         wordToShow: null,
         translatedWord: null,
         backgroundImgUrl: franceBackgroundImage,
-        languageChoice: "french"
+        languageChoice: "french",
+        words: []
     };
 
     componentDidMount() {
-        const word = getRandomWord();
-        translateFrench(word)
-            .then(translatedWord => this.setState({
-                wordToShow: word,
-                translatedWord
-            }));
+        this.queryWords();
     }
+
+    getRandomWord = () => {
+        return this.state.words[Math.floor(Math.random() * this.state.words.length)];
+    };
 
     saveChanges = () => {
         console.log("The selected language is", this.state.languageChoice);
     };
 
-    selectLanguage = (event) => {
+    selectLanguage = event => {
         this.setState({ selectLanguage: event.target.value });
     };
 
-    execute = event => {
+    queryWords = event => {
+      this.setState(() => ({isLoading: true}));
+      if (!this.state.isLoading) {
+        client.auth
+            .loginWithCredential(new AnonymousCredential())
+            .then(user => {
+                const frenchCollection = mongo.db("frenchwords").collection("basic");
+                // return frenchCollection.insertMany(basicWords.map(word => ({word})));
+                return frenchCollection.find();
+                // return frenchCollection.deleteMany({});
+            })
+            .then(results => {
+                const {proxy} = results;
+                return proxy.executeRead();
+            })
+            .then(results => {
+                console.log("Results2: ", results);
+                // const frenchCollection = mongo.db("frenchwords").collection("basic");
+                this.setState({ words: results });
+            })
+            .then(() => {
+              const word = this.getRandomWord();
+              translateFrench(word.word)
+                  .then(translatedWord => this.setState({
+                      wordToShow: word.word,
+                      translatedWord
+                  }));
+              const userCollection = mongo.db("usedata").collection("users");
+              return userCollection.find({ "userName": "test" });
+            })
+            .then(user => {
+              user
+            })
+            .catch(console.error)
+            .finally(() => {
+      this.setState(() => ({isLoading: false}));
+            })
+      }
+        
         if (event) {
             event.preventDefault();
         }
@@ -55,7 +90,7 @@ class App extends Component {
                 backgroundImage: `url('${this.state.backgroundImgUrl}')`
             }}>
                 <header className="App-header">
-                    <h1 className="App-title">Learn: <b>French!</b></h1>
+                    <h1 className="App-title">Learn: <b>{this.state.languageChoice}!</b></h1>
                 </header>
                 <p className="App-intro">
                     {this.state.wordToShow} <img src={arrow} className="word-arrow" /> {this.state.translatedWord}
