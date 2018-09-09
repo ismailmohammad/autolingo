@@ -3,8 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@google-cloud/translate": "latest",
+    "axios": "^0.18.0",
     "mongodb-stitch": "^3.2.1",
     "mongodb-stitch-browser-sdk": "^4.0.13",
+    "query-string": "^6.1.0",
     "react": "^16.5.0",
     "react-dom": "^16.5.0",
     "react-scripts": "1.1.5"

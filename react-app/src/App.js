@@ -5,6 +5,7 @@ import arrow from './media/arrow.jpg';
 import settingsIcon from './settings_icon.png';
 import './App.css';
 import basicWords from "./basicWords";
+import {translateFrench} from "./translate";
 
 const APP_ID = "auto-linguo-xaqwa";
 const client = Stitch.initializeDefaultAppClient(APP_ID);
@@ -19,15 +20,18 @@ const getRandomWord = () => {
 class App extends Component {
     state = {
         wordToShow: null,
+        translatedWord: null,
         backgroundImgUrl: franceBackgroundImage,
         languageChoice: "french"
     };
 
     componentDidMount() {
         const word = getRandomWord();
-        this.setState({
-            wordToShow: word
-        });
+        translateFrench(word)
+            .then(translatedWord => this.setState({
+                wordToShow: word,
+                translatedWord
+            }));
     }
 
     saveChanges = () => {
@@ -39,25 +43,6 @@ class App extends Component {
     };
 
     execute = event => {
-        client.auth
-            .loginWithCredential(new AnonymousCredential())
-            .then(user => {
-                const frenchCollection = mongo.db("frenchwords").collection("basic");
-                // return frenchCollection.insertMany(basicWords.map(word => ({word})));
-                // return frenchCollection.find();
-                return frenchCollection.deleteMany({});
-            })
-            // .then(results => {
-            //     console.log("Results: ", results);
-            //
-            //     const {proxy} = results;
-            //     return proxy.executeRead();
-            // })
-            .then(results => {
-                console.log("Results2: ", results);
-                // const frenchCollection = mongo.db("frenchwords").collection("basic");
-            })
-            .catch(console.error);
         if (event) {
             event.preventDefault();
         }
@@ -73,7 +58,7 @@ class App extends Component {
                     <h1 className="App-title">Learn: <b>French!</b></h1>
                 </header>
                 <p className="App-intro">
-                    {this.state.wordToShow} <img src={arrow} className="word-arrow" /> {this.state.wordToShow}
+                    {this.state.wordToShow} <img src={arrow} className="word-arrow" /> {this.state.translatedWord}
                 </p>
                 <button onClick={this.execute}>EXECUTE</button>
                 <p className="sub-paragraph"> Open a new tab or refresh for a different word. </p>
