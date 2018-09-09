@@ -65,7 +65,7 @@ class App extends Component {
                 console.log("Updated score: ", result);
             })
             .catch(console.error)
-    }
+    };
 
 
     queryScore = () => {
@@ -84,7 +84,6 @@ class App extends Component {
                 this.setState(() => ({ score: results[0].score }));
             })
             .catch(console.error)
-
     };
 
     getRandomWord = () => {
@@ -96,7 +95,7 @@ class App extends Component {
     };
 
     selectLanguage = event => {
-        this.setState({ selectLanguage: event.target.value });
+        this.setState({selectLanguage: event.target.value});
     };
 
     queryWords = event => {
@@ -195,6 +194,11 @@ class App extends Component {
               this.updateScore(this.state.score - 1);
             }
         }
+        setTimeout(() => this.setState(() => ({
+            isCorrect: false,
+            isKindaCorrect: false,
+            isWrong: false
+        })), 5000);
         if (e) {
             e.preventDefault();
         }
