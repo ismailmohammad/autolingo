@@ -87,6 +87,9 @@ p.sub-paragraph{
   right:0;
   color: white;
   font-family: "Quicksand";
+  padding: 15px 15px 15px 15px;
+  background-color: rgba(77, 80, 86, 0.7);
+  border-radius: 8px;
 }
 
 .score-number {

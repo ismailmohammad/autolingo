@@ -124,11 +124,12 @@ class App extends Component {
     selectLanguage = event => {
         this.setState({ languageChoice: event.target.value});
         let lang = "fr";
+        let img = franceBackgroundImage;
         if (event.target.value === "spanish") {
           lang = "es"
-          this.setState(() => ({ backgroundImgUrl: spainBackgroundImage}));
+          img = spainBackgroundImage;
         }
-        this.setState(() => ({ translateCode: lang }));
+        this.setState(() => ({ translateCode: lang, backgroundImgUrl: img }));
         this.queryWords();
     };
 
@@ -288,7 +289,7 @@ class App extends Component {
                     {this.state.wordToShow} <img src={arrow} className="word-arrow" /> {this.state.translatedWord}
                 </p> : null }
                 <img className="settings" src={settingsIcon} data-toggle="modal" data-target="#settingsModal" alt="Settings" />
-                <h3 className="score-display">Score:<br/><span className="score-number">{this.state.score}</span></h3>
+                <div className="score-display"><h3>Score:<br/><span className="score-number">{this.state.score}</span></h3></div>
                 {
                     this.state.correctAnswer &&
                     this.state.questionWord &&
@@ -328,12 +329,13 @@ class App extends Component {
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title" id="settingsModalLabel">Language Preferences</h5>
+                                <h5 className="modal-title" id="settingsModalLabel">Preferences</h5>
                                 <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <div className="modal-body">
+                                <h3>Select Language:</h3>
                                 <select value={this.state.languageChoice} onChange={this.selectLanguage}>
                                     <option id="french">french</option>
                                     <option id="spanish">spanish</option>
@@ -341,7 +343,7 @@ class App extends Component {
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" className="btn btn-primary" onClick={this.saveChanges}>Save changes</button>
+                                {/* <button type="button" className="btn btn-primary" onClick={this.saveChanges}>Save changes</button> */}
                             </div>
                         </div>
                     </div>
