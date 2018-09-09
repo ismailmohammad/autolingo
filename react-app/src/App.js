@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
+import franceBackgroundImage from './france_background.jpg';
 import logo from './logo.svg';
 import './App.css';
 
-const words = ["1", "2", "3", "4", "5"];
+const words = ["Word1", "Word2", "Word3", "Word4", "Word5"];
 const languages = {
   french: {
     description: "add a ",
@@ -17,7 +18,8 @@ const getRandomWord = () => {
 
 class App extends Component {
   state = {
-    wordToShow: null
+    wordToShow: null,
+    backgroundImgUrl: franceBackgroundImage
   };
 
   componentDidMount() {
@@ -30,13 +32,16 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
+      <div className="App" style={{
+        backgroundImage: `url('${this.state.backgroundImgUrl}')`
+      }}>
         <header className="App-header">
-          <h1 className="App-title">Learn: <u>French</u></h1>
+          <h1 className="App-title">Learn: <u>French</u>!</h1>
         </header>
         <p className="App-intro">
-          {this.state.wordToShow}
+          {this.state.wordToShow} -> {this.state.wordToShow}
         </p>
+        <p className="sub-paragraph"> Open a new tab or refresh for a different word. </p>
       </div>
     );
   }
