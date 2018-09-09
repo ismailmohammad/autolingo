@@ -5,7 +5,6 @@ import {Stitch, RemoteMongoClient, AnonymousCredential} from "mongodb-stitch-bro
 import arrow from './media/arrow.jpg';
 import settingsIcon from './settings_icon.png';
 import './App.css';
-import basicWords from "./basicWords";
 import {translateFrench} from "./translate";
 
 const APP_ID = "auto-linguo-xaqwa";
@@ -18,6 +17,11 @@ class App extends Component {
     state = {
         wordToShow: null,
         translatedWord: null,
+        questionWord: null,
+        answer: null,
+        correctAnswer: null,
+        isCorrect: false,
+        isWrong: false,
         backgroundImgUrl: franceBackgroundImage,
         languageChoice: "french",
         words: []
@@ -83,6 +87,20 @@ class App extends Component {
         }
     };
 
+    changeAnswer = e => {
+        this.setState(() => ({answer: e.target.value}));
+        if (e) {
+            e.preventDefault();
+        }
+    };
+
+    submitAnswer = e => {
+        this.setState(() => ({}));
+
+        if (e) {
+            e.preventDefault();
+        }
+    };
 
     render() {
         return (
@@ -96,8 +114,21 @@ class App extends Component {
                     {this.state.wordToShow} <img src={arrow} className="word-arrow" /> {this.state.translatedWord}
                 </p>
                 <button onClick={this.execute}>EXECUTE</button>
-                <p className="sub-paragraph"> Open a new tab or refresh for a different word. </p>
+                <p className="sub-paragraph"> Open a new tab for a different word</p>
                 <img className="settings" src={settingsIcon} data-toggle="modal" data-target="#settingsModal" alt="Settings" />
+
+                <p className="sub-paragraph" style={{}}>Quiz: What is the French translation of {this.state.questionWord}</p>
+                <input
+                    type="text"
+                    className="input"
+                    placeholder="Enter your answer"
+                    onChange={this.changeAnswer}
+                />
+                <button onClick={this.submitAnswer}>Submit answer</button>
+                {this.state.isCorrect && <p className="text-success">Correct!</p>}
+                {this.state.isWrong && <p className="text-danger">Oh no! The correct answer is</p>}
+
+
                 <div className="modal fade" id="settingsModal" tabIndex="-1" role="dialog" aria-labelledby="settingsModalLabel" aria-hidden="true">
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">

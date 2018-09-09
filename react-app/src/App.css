@@ -36,6 +36,8 @@ p.sub-paragraph{
   margin-top: 15%;
   font-size: 1.3em;
   margin-bottom: 05%;
+  color: white;
+  text-shadow: 0 1px black;
 }
 
 .settings{
