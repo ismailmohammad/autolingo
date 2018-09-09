@@ -74,3 +74,11 @@ p.sub-paragraph{
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.score-display{
+  position:absolute;
+  margin-left: 1.5%;
+  top: 20px;
+  right:0;
+  cursor: pointer;
+}

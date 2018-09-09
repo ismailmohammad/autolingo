@@ -31,8 +31,6 @@ const levenshteinDistance = (a, b) => {
     } return u[n];
 };
 
-const words = ["Bonjour", "Salut", "Merci", "Je", "Tu", "Suis", "Oui", "Non" ];
-
 class App extends Component {
     state = {
         wordToShow: null,
@@ -45,11 +43,44 @@ class App extends Component {
         isWrong: false,
         backgroundImgUrl: franceBackgroundImage,
         languageChoice: "french",
-        words: []
+        words: [],
+        score: null
     };
 
     componentDidMount() {
         this.queryWords();
+        this.queryScore();
+    }
+
+    updateScore = (score) => {
+      client.auth
+      .loginWithCredential(new AnonymousCredential())
+      .then(user => {
+          const userCollection = mongo.db("userdata").collection("score");
+          return userCollection.updateOne({ "userName": "test"}, {"score": score });
+      })
+      .then(result => console.log(result))
+      .catch(console.error)
+    }
+    
+
+    queryScore = () => {
+      client.auth
+            .loginWithCredential(new AnonymousCredential())
+            .then(user => {
+                const userCollection = mongo.db("userdata").collection("score");
+                return userCollection.find();
+            })
+            .then(results => {
+                const {proxy} = results;
+                return proxy.executeRead();
+            })
+            .then(results => {
+                console.log("Score Query: ", results);
+                this.setState({ score: results.score });
+            })
+            .catch(console.error)
+
     }
 
     getRandomWord = () => {
