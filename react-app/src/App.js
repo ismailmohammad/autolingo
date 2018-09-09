@@ -76,7 +76,7 @@ class App extends Component {
                 <button onClick={this.execute}>EXECUTE</button>
                 <p className="sub-paragraph"> Open a new tab or refresh for a different word. </p>
                 <img className="settings" src={settingsIcon} data-toggle="modal" data-target="#settingsModal" alt="Settings" />
-                <div className="modal fade" id="settingsModal" tabIndex="-1" role="dialog" aria-labelledby="setting sModalLabel" aria-hidden="true">
+                <div className="modal fade" id="settingsModal" tabIndex="-1" role="dialog" aria-labelledby="settingsModalLabel" aria-hidden="true">
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
                             <div className="modal-header">
